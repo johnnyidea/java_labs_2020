@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, InvalidNameException {
+    public static void main(String[] args) throws IOException, InvalidNameException, ClassNotFoundException {
         AppWorkout app = new AppWorkout ();
         app.run();
     }

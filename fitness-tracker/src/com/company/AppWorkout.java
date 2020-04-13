@@ -1,12 +1,14 @@
 package com.company;
 
 import javax.naming.InvalidNameException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 
 public class AppWorkout {
+    private boolean init = false;
+    private int dude_id = 0;
+    private ArrayList<Training> workout;
+    private ArrayList<Profile> dudes;
 
     AppWorkout(){
     }
@@ -27,24 +29,33 @@ public class AppWorkout {
         return true;
     }
 
-    public void run() throws IOException, InvalidNameException {
+    private void readDudes() throws FileNotFoundException {
+        FileInputStream fis = new FileInputStream("dudes.out");
+        boolean cont = true;
+        while(cont){
+            try ( ObjectInputStream input = new ObjectInputStream(fis)){
+                Profile obj = (Profile) input.readObject();
+                if(obj != null) {
+                    dudes.add(obj);
+                } else {
+                    cont = false;
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                cont = false;
+//                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private void login() throws IOException, ClassNotFoundException {
+
         BufferedReader b_r = new BufferedReader(new InputStreamReader(System.in));
         String cmd_op;
 
-        ArrayList<Training> workout = new ArrayList<Training>();
-        workout.add(new Training("push_ups", 345.0));
-        workout.add(new Training("jump rope", 413.0));
-        workout.add(new Training("squats", 284.1));
-
-        ArrayList<Profile> dudes = new ArrayList<Profile>();
-        dudes.add( new Profile("Dude1"));
-
-        int dude_id = 0;
-
-        boolean init = false;
-
         while (!init) {
-            System.out.println("Do you have a profile?(y/n): ");
+
+            System.out.print("Do you have a profile?(y/n): ");
             cmd_op = b_r.readLine();
 
             if (cmd_op.equals("y")) {
@@ -53,15 +64,22 @@ public class AppWorkout {
                 for (int i = 0; i < dudes.size(); i++) {
                     System.out.print(i + 1 + " " + dudes.get(i).get_name() + "\n");
                 }
+
                 System.out.print("Select your profile:");
                 cmd_op = b_r.readLine();
 
                 if (!isInteger(cmd_op)) {
-                    System.out.println("Write number and try again");
+                    System.out.println("Try again");
                     continue;
                 }
 
                 dude_id = Integer.parseInt(cmd_op) - 1;
+
+                if (dude_id >= dudes.size() || dude_id < 0) {
+                    System.out.println("Wrong number, try again");
+                    continue;
+                }
+
                 init = true;
                 break;
 
@@ -69,15 +87,20 @@ public class AppWorkout {
 
                 System.out.print("Write your name:");
                 cmd_op = b_r.readLine();
+
                 dudes.add(new Profile(cmd_op));
                 continue;
 
             } else continue;
-
         }
+    }
+
+    private void process() throws IOException {
+        BufferedReader b_r = new BufferedReader(new InputStreamReader(System.in));
+        String cmd_op;
 
         while (init) {
-
+            System.out.println();
             for (int i = 0; i < workout.size(); i++) {
                 System.out.print(i + 1 + " ");
                 workout.get(i).display();
@@ -93,7 +116,7 @@ public class AppWorkout {
 
             int train_num = Integer.parseInt(cmd_op);
 
-            if (train_num > workout.size() || train_num < 0) {
+            if (train_num > workout.size() || train_num < 1) {
                 System.out.println("Wrong number, try again");
                 continue;
             }
@@ -134,6 +157,31 @@ public class AppWorkout {
 
             break;
         }
+    }
 
+    public void run() throws IOException, InvalidNameException, ClassNotFoundException {
+
+        workout = new ArrayList<Training>();
+        workout.add(new Training("push_ups", 345.0));
+        workout.add(new Training("jump rope", 413.0));
+        workout.add(new Training("squats", 284.1));
+
+        dudes = new ArrayList<Profile>();
+        dudes.add( new Profile("Dude1"));
+
+        readDudes();
+
+        int num_dudes = dudes.size();
+        login();
+        process();
+
+        FileOutputStream fos = new FileOutputStream( "dudes.out" , true);
+        AppendingObjectOutputStream  out = new AppendingObjectOutputStream(fos);
+
+        for (int i = num_dudes; i < dudes.size() ; i++) {
+            out.writeObject(dudes.get(i));
+        }
+
+        out.close();
     }
 }

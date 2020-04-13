@@ -1,6 +1,8 @@
 package com.company;
 
-public class Profile {
+import java.io.Serializable;
+
+public class Profile implements Serializable {
     private String name;
     private double all_cal = 0;
     private double all_time = 0;
