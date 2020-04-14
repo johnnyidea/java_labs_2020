@@ -32,27 +32,28 @@ public class AppWorkout {
         return true;
     }
 
-    private void readDudes() throws FileNotFoundException {
+    private void readDudes() throws IOException, ClassNotFoundException {
         Path curr_path = Paths.get("").toAbsolutePath();
 
         String tmp = curr_path.toString() + "/dudes.out";
         File f = new File(tmp);
         if (!f.exists()) return;
+
         FileInputStream fis = new FileInputStream("dudes.out");
         boolean cont = true;
-        while(cont){
-            try ( ObjectInputStream input = new ObjectInputStream(fis)){
-                Profile obj = (Profile) input.readObject();
-                if(obj != null) {
-                    dudes.add(obj);
-                } else {
-                    cont = false;
-                }
-            } catch (IOException | ClassNotFoundException e) {
+
+        try ( ObjectInputStream input = new ObjectInputStream(fis)){
+            while(cont) {
+                ArrayList <Profile> obj = (ArrayList<Profile>) input.readObject();
+                if (obj != null) { dudes = obj;  }
+
                 cont = false;
-//                e.printStackTrace();
+
             }
+        } catch (IOException | ClassNotFoundException e) {
+            cont = false;
         }
+
     }
 
 
@@ -182,16 +183,13 @@ public class AppWorkout {
 
         readDudes();
 
-        int num_dudes = dudes.size();
         login();
-
         process();
 
         FileOutputStream fos = new FileOutputStream( "dudes.out" , true);
-        AppendingObjectOutputStream  out = new AppendingObjectOutputStream(fos);
-        for (int i = num_dudes; i < dudes.size() ; i++) {
-            out.writeObject(dudes.get(i));
-        }
+        ObjectOutputStream  out = new ObjectOutputStream(fos);
+
+        out.writeObject(dudes);
 
         out.close();
     }
