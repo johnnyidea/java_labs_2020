@@ -40,15 +40,15 @@ public class AppWorkout {
         if (!f.exists()) return;
 
         FileInputStream fis = new FileInputStream("dudes.out");
-        boolean cont = true;
 
+        boolean cont = true;
         try ( ObjectInputStream input = new ObjectInputStream(fis)){
             while(cont) {
-                ArrayList <Profile> obj = (ArrayList<Profile>) input.readObject();
-                if (obj != null) { dudes = obj;  }
-
-                cont = false;
-
+                ArrayList <Profile> obj  = (ArrayList<Profile>) input.readObject();
+                if (obj != null) {
+                    dudes = obj;
+                }
+//                cont = false;
             }
         } catch (IOException | ClassNotFoundException e) {
             cont = false;
@@ -186,7 +186,7 @@ public class AppWorkout {
         login();
         process();
 
-        FileOutputStream fos = new FileOutputStream( "dudes.out" , true);
+        FileOutputStream fos = new FileOutputStream( "dudes.out" );
         ObjectOutputStream  out = new ObjectOutputStream(fos);
 
         out.writeObject(dudes);
