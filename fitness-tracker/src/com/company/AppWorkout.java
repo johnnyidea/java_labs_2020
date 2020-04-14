@@ -2,6 +2,9 @@ package com.company;
 
 import javax.naming.InvalidNameException;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class AppWorkout {
@@ -30,6 +33,11 @@ public class AppWorkout {
     }
 
     private void readDudes() throws FileNotFoundException {
+        Path curr_path = Paths.get("").toAbsolutePath();
+
+        String tmp = curr_path.toString() + "/dudes.out";
+        File f = new File(tmp);
+        if (!f.exists()) return;
         FileInputStream fis = new FileInputStream("dudes.out");
         boolean cont = true;
         while(cont){
@@ -167,17 +175,16 @@ public class AppWorkout {
         workout.add(new Training("squats", 284.1));
 
         dudes = new ArrayList<Profile>();
-        dudes.add( new Profile("Dude1"));
 
         readDudes();
 
         int num_dudes = dudes.size();
         login();
-        process();
+
+//        process();
 
         FileOutputStream fos = new FileOutputStream( "dudes.out" , true);
-        AppendingObjectOutputStream  out = new AppendingObjectOutputStream(fos);
-
+        ObjectOutputStream  out = new ObjectOutputStream(fos);
         for (int i = num_dudes; i < dudes.size() ; i++) {
             out.writeObject(dudes.get(i));
         }
