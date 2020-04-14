@@ -68,6 +68,10 @@ public class AppWorkout {
 
             if (cmd_op.equals("y")) {
 
+                if (dudes.size() == 0) {
+                    System.out.println("profiles do not exist");
+                    continue;
+                }
                 System.out.println("Available profiles: ");
                 for (int i = 0; i < dudes.size(); i++) {
                     System.out.print(i + 1 + " " + dudes.get(i).get_name() + "\n");
@@ -181,10 +185,10 @@ public class AppWorkout {
         int num_dudes = dudes.size();
         login();
 
-//        process();
+        process();
 
         FileOutputStream fos = new FileOutputStream( "dudes.out" , true);
-        ObjectOutputStream  out = new ObjectOutputStream(fos);
+        AppendingObjectOutputStream  out = new AppendingObjectOutputStream(fos);
         for (int i = num_dudes; i < dudes.size() ; i++) {
             out.writeObject(dudes.get(i));
         }
