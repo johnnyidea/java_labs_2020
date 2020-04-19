@@ -30,43 +30,16 @@ public class Main {
             return;
         }
 
-        int[] x = new int[words.size()];
-        double[] p = new double [words.size()];
-        int n = 0;
+        DistributionLaw dl = new DistributionLaw(words);
 
-        for (int i = 0; i < words.size(); i++) n += words.get(i).length();
+        MainParam mainParam = dl.getMainParams();
 
-        System.out.println("Input words:");
-        for (int i = 0; i < words.size(); i++) {
-            System.out.print(words.get(i) + " ");
-            x[i] = words.get(i).length();
-            p[i] = words.get(i).length() /(double) n;
-            BigDecimal bd = new BigDecimal(p[i]).setScale(2, RoundingMode.HALF_EVEN);
-            p[i] = bd.doubleValue();
-        }
-
-        System.out.println("\nЗакон распределения X в задан в форме таблицы:");
-
-        System.out.print("X:");
-        for (int i = 0; i < x.length; i++){
-            System.out.print( "   " + x[i]);
-            //заодно вычислим все осн. параметры
-            mx += x[i]*p[i];
-            mx2 +=  Math.pow(x[i], 2) * p[i];
-        }
-
-        System.out.print("\nP:");
-        for (int i = 0; i < x.length; i++){
-            System.out.print(p[i] + " ");
-        }
-
-        System.out.print("\nmx= " + mx);
-        System.out.print("\ndx= " + (mx2 - Math.pow(mx, 2)));
+        System.out.print("\nmx= " + mainParam.mx);
+        System.out.print("\ndx= " + mainParam.dx);
 
     }
 
     private static ArrayList<String> parseReadFromFile(InputStreamReader reader) throws IOException{
-
         ArrayList<String> res = new ArrayList<>();
         Scanner sc = new Scanner(reader);
 
