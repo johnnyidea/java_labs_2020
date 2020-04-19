@@ -99,6 +99,10 @@ public class AppWorkout {
                 System.out.print("Write your name:");
                 cmd_op = b_r.readLine();
 
+                if (cmd_op.equals("")){
+                    System.out.println("Wrong name");
+                    continue;
+                }
                 dudes.add(new Profile(cmd_op));
                 continue;
 
@@ -106,7 +110,7 @@ public class AppWorkout {
         }
     }
 
-    private void process() throws IOException {
+    private void process(ArrayList<Training> workout) throws IOException {
         BufferedReader b_r = new BufferedReader(new InputStreamReader(System.in));
         String cmd_op;
 
@@ -141,11 +145,14 @@ public class AppWorkout {
                 System.out.print("Write `stop` when you finish: ");
                 while (true) {
                     if (cmd_op.equals("stop")) {
-                        time = (System.currentTimeMillis() - start) / (1e3 * 3600*1000);
+                        time = (System.currentTimeMillis() - start) / (1e3 * 3600 * 1000);
                         workout.get(train_num - 1).all_cal += time * workout.get(train_num - 1).get_cal_hour();
                         break;
                     }
                     cmd_op = b_r.readLine();
+                    if (!cmd_op.equals("stop")){
+                        System.out.print("Please, write word correctly(`stop`):");
+                    }
                 }
             } else continue;
 
@@ -170,25 +177,27 @@ public class AppWorkout {
         }
     }
 
+    public ArrayList<Training> create_workout(){
+        ArrayList<Training> exercise = new ArrayList<>();
+        exercise.add(new Training("push_ups", 345.0));
+        exercise.add(new Training("jump rope", 413.0));
+        exercise.add(new Training("squats", 284.1));
+        return exercise;
+    }
+
     public void run() throws IOException, InvalidNameException, ClassNotFoundException {
 
-        workout = new ArrayList<Training>();
-        workout.add(new Training("push_ups", 345.0));
-        workout.add(new Training("jump rope", 413.0));
-        workout.add(new Training("squats", 284.1));
-
+        ArrayList<Training> workout =  create_workout();
         dudes = new ArrayList<Profile>();
 
         readDudes();
-
         login();
-        process();
+        process(workout);
 
         FileOutputStream fos = new FileOutputStream( "dudes.out" );
         ObjectOutputStream  out = new ObjectOutputStream(fos);
-
         out.writeObject(dudes);
-
         out.close();
     }
+
 }

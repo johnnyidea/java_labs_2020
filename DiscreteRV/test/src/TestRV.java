@@ -1,4 +1,3 @@
-//import com.company.DistributionLaw;
 import com.company.DistributionLaw;
 import com.company.MainParam;
 import org.junit.Assert;
